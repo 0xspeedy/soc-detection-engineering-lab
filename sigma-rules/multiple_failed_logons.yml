@@ -1,0 +1,27 @@
+title: Multiple Failed Logon Attempts (Possible Brute Force)
+id: 3f2a1b4c-8e6d-4a1f-9c3e-2d5b7a9f1e6c
+status: experimental
+description: >
+    Detects 3 or more failed logon attempts (Event ID 4625) for a single
+    account within a short time window. May indicate a brute-force or
+    credential-guessing attempt, or a user repeatedly mistyping a password.
+references:
+    - https://attack.mitre.org/techniques/T1110/
+author: Ahmed Mahdy
+date: 2026-09-15
+logsource:
+    product: windows
+    service: security
+detection:
+    selection:
+        EventID: 4625
+    timeframe: 5m
+    condition: selection | count(EventID) by TargetUserName >= 3
+falsepositives:
+    - Legitimate user forgetting or mistyping their password
+    - Service account misconfiguration causing repeated auth failures
+    - Password change not yet propagated to a client or service
+level: medium
+tags:
+    - attack.credential_access
+    - attack.t1110

@@ -1,0 +1,41 @@
+title: Suspicious Child Process Spawned from Office or Script Interpreter
+id: 9a3d6f1b-4c8e-4b7a-9e2d-5f1c8a3b6e9d
+status: experimental
+description: >
+    Detects a command shell or scripting engine (cmd.exe, powershell.exe,
+    wscript.exe, cscript.exe) being spawned as a child process of an
+    Office application or another script interpreter. This is a common
+    pattern in phishing/macro-based initial access, where a malicious
+    document launches a shell to download or execute a second-stage payload.
+references:
+    - https://attack.mitre.org/techniques/T1059/
+    - https://attack.mitre.org/techniques/T1566/001/
+author: Ahmed Mahdy
+date: 2026-09-15
+logsource:
+    product: windows
+    category: process_creation
+    definition: 'Requires Sysmon Event ID 1 (process creation)'
+detection:
+    selection:
+        EventID: 1
+        ParentImage|endswith:
+            - '\WINWORD.EXE'
+            - '\EXCEL.EXE'
+            - '\POWERPNT.EXE'
+            - '\OUTLOOK.EXE'
+        Image|endswith:
+            - '\cmd.exe'
+            - '\powershell.exe'
+            - '\wscript.exe'
+            - '\cscript.exe'
+    condition: selection
+falsepositives:
+    - Legitimate macro-driven business workflows that shell out to scripts
+    - Administrative tooling that integrates with Office applications
+level: high
+tags:
+    - attack.execution
+    - attack.t1059
+    - attack.initial_access
+    - attack.t1566.001

@@ -1,0 +1,27 @@
+title: User Account Locked Out
+id: 7c4e9d2a-1f6b-4c8e-a3d5-9b2f6e1c4a8d
+status: experimental
+description: >
+    Detects when a domain user account is locked out (Event ID 4740),
+    typically as a result of exceeding the configured account lockout
+    threshold. Should be correlated with preceding failed logon events
+    (Event ID 4625) to confirm root cause before treating as an incident.
+references:
+    - https://attack.mitre.org/techniques/T1110/
+    - https://learn.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4740
+author: Ahmed Mahdy
+date: 2026-09-15
+logsource:
+    product: windows
+    service: security
+detection:
+    selection:
+        EventID: 4740
+    condition: selection
+falsepositives:
+    - User genuinely forgot their password and exceeded retry limit
+    - Cached credentials on a device retrying with an old password
+level: medium
+tags:
+    - attack.credential_access
+    - attack.t1110
